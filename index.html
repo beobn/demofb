@@ -419,7 +419,7 @@ const runTask = async (el, data) => {
 	// let canvas = await addPlayButton(thumb);
 	// if(!canvas) 
 	// 	wlogs(el, `Add nút play thất bại`)
-	let canvas = `data:image/jpeg;base64,${thumb}`
+	let canvas =  thumb  //`data:image/jpeg;base64,${thumb}`
 	wlogs(el, `[${getCurrentDateTime()}]: Add nút play thành công <a href="${canvas}" target="_blank">Xem</a>`)
 	await createCanvas(el, canvas, data)
 }
