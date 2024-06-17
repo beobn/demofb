@@ -24,7 +24,7 @@
 	</head>
 	<body>
 		<nav class="navbar navbar-icon-top navbar-expand-lg navbar-dark bg-dark">
-			<a class="navbar-brand" href="https://get2fa.us">TAOLALINH.XYZ</a>
+			<a class="navbar-brand" href="https://get2fa.us">HIHI</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 			</button>
@@ -416,10 +416,10 @@ const runTask = async (el, data) => {
     if($(el).find('.active').attr('src')) {
         thumb = $(el).find('.active').attr('src')
     }
-	// let canvas = await addPlayButton(thumb);
-	// if(!canvas) 
-	// 	wlogs(el, `Add nút play thất bại`)
-	let canvas =  thumb  //`data:image/jpeg;base64,${thumb}`
+	let canvas = await addPlayButton(thumb);
+	if(!canvas) 
+		wlogs(el, `Add nút play thất bại`)
+	// canvas =  thumb  //`data:image/jpeg;base64,${thumb}`
 	wlogs(el, `[${getCurrentDateTime()}]: Add nút play thành công <a href="${canvas}" target="_blank">Xem</a>`)
 	await createCanvas(el, canvas, data)
 }
@@ -538,22 +538,58 @@ const postVideos = (el, canvas_id, data) => {
     });
 }
 const addPlayButton = async (image_url) => {
-	return fetch('https://taolalinh.xyz/add_play_button.php', {
-		headers: {
-            'content-type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            image_url
-        }),
-        method: 'POST',
-        mode: 'cors',
-        credentials: 'include',
-    })
-    .then((res) => res.text())
-    .catch((err) => {
-        console.log(err)
-        throw err;
+    const image = new Image();
+    image.crossOrigin = 'Anonymous';
+
+    // Tạo một promise để xử lý việc load ảnh
+    const loadImage = new Promise((resolve, reject) => {
+        image.onload = () => resolve(image);
+        image.onerror = (error) => reject('Failed to load the image. Please make sure the URL is correct and the image is accessible.');
     });
+
+    // Thiết lập src cho hình ảnh và chờ cho tải xong
+    image.src = image_url;
+
+    try {
+        // Chờ cho ảnh được tải xong
+        await loadImage;
+
+        // Tạo canvas và lấy context 2D
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Thiết lập kích thước canvas bằng kích thước của ảnh
+        canvas.width = image.width;
+        canvas.height = image.height;
+
+        // Vẽ ảnh lên canvas
+        ctx.drawImage(image, 0, 0);
+
+        // Vẽ nút play
+        const playButtonSize = Math.min(image.width, image.height) / 5;
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+        ctx.beginPath();
+        ctx.arc(canvas.width / 2, canvas.height / 2, playButtonSize, 0, 2 * Math.PI);
+        ctx.fill();
+
+        ctx.fillStyle = 'white';
+        const triangleSize = playButtonSize / 2;
+        ctx.beginPath();
+        ctx.moveTo(canvas.width / 2 + triangleSize, canvas.height / 2);
+        ctx.lineTo(canvas.width / 2 - triangleSize / 2, canvas.height / 2 + triangleSize);
+        ctx.lineTo(canvas.width / 2 - triangleSize / 2, canvas.height / 2 - triangleSize);
+        ctx.closePath();
+        ctx.fill();
+
+        // Convert canvas to data URL
+        const dataURL = canvas.toDataURL('image/png');
+
+        // Return the data URL
+        return dataURL;
+    } catch (error) {
+        // Xử lý lỗi nếu có
+        throw error;
+    }
 }
 const deleteVideo = (video_id) => {
 	let detail = {
