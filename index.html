@@ -65,6 +65,7 @@
 					<div class="row">
 						<div class="col-md-4">
 							<div class="form-group">
+                                <input type="text" class="form-control" onchange="seachPage()" id="searchInputPage" placeholder="Nhập đủ tên page">
 								<select class="form-control" id="listPages">
 								</select>
 							</div>
@@ -121,7 +122,7 @@
 			<div class="modal-body">
 				<form id="auto-post-form">
 					<div class="form-group">
-						<input type="number" class="form-control" name="delay_post" placeholder="Delay mỗi bài (phút)" value="60" />
+						<input type="number" class="form-control" name="delay_post" placeholder="Delay mỗi bài (phút)" value="0" />
 					</div>
 					<div class="form-group">
 						<input type="text" class="form-control" name="canvas_url" placeholder="Link canvas" />
@@ -133,7 +134,7 @@
 						</select>
 					</div>
                     <div class="form-group">
-                        <input type="number" class="form-control" name="delay_start" placeholder="Bắt đầu chạy sau (phút)" value="1" />
+                        <input type="number" class="form-control" name="delay_start" placeholder="Bắt đầu chạy sau (phút)" value="0" />
                     </div>
 				</form>
 			</div>
@@ -765,6 +766,19 @@ const formatDateTime = (isoDateTimeString) => {
     minutes = minutes < 10 ? '0' + minutes : minutes;
     var formattedDateTime = hours + ':' + minutes + ' ' + day + '/' + month + '/' + year;
     return formattedDateTime;
+}
+function seachPage() {
+    var seachText = document.getElementById('searchInputPage').value;   
+    const selectElement = document.querySelector('#listPages');
+    // Lựa chọn phần tử <option> có giá trị là 'value1'
+    const optionElement = selectElement.querySelector(`option[data-name="${seachText}"]`);
+    console.log(optionElement);
+    if (optionElement) {
+        optionElement.selected = true
+        console.log('Đã tìm thấy:', seachText);
+    } else {
+        console.log('Không tìm thấy');
+    }
 }
 </script>
 </div>
